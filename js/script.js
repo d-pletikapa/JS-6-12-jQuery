@@ -193,16 +193,62 @@ console.log(div.outerWidth(true), div.outerHeight(true));
 // get / post
 $('.modal-order__form').submit(function (event) {
   event.preventDefault();
-  $.post('https://jsonplaceholder.typicode.com/todos', $(this).serialize())
-  .then(function(data) {
-    console.log(data);
-    return data
-  })
-  .then(function(returnedData) {
-    console.log(returnedData);
-  })
-  .catch(function(err) {
-    console.log(err);
-  })
+  // $.post('https://jsonplaceholder.typicode.com/todos', $(this).serialize())
+  // .then(function(data) {
+  //   console.log(data);
+  //   return data
+  // })
+  // .then(function(returnedData) {
+  //   console.log(returnedData);
+  // })
+  // .catch(function(err) {
+  //   console.log(err.status);
+  // })
+
+  //Ajax
+  $.ajax({
+    url: 'https://jsonplaceholder.typicode.com/todos',
+    type: 'POST',
+    data: $(this).serialize(),
+    success(data) {
+      modalOrderTitle.text(
+        'Спасибо ваша заявка принята, номер заявки ' + data.id);
+        $('.modal-order__form').slideUp(300);
+    },
+    error() {
+      modalOrderTitle.text('Что-то пошло не так, попробуйте еще раз');
+    }
+  }); 
 })
-//21.15
+
+//Burger menu
+const burgerNav = $('.navigation');
+const burgerNavClose = $('.navigation__close');
+const headerBurger = $('.header__burger');
+
+// Открытие меню при клике на кнопку
+headerBurger.on('click', function () {
+  burgerNav.animate({
+    left: 0,
+  }, 500, function () {
+    burgerNavClose.animate({
+      opacity: 1,
+    }, 300, 'swing');
+  });
+});
+
+// Закрытие меню при клике на кнопку закрытия или при клике 
+// мимо меню
+$(document).on('click', function (event) {
+  if ((!$(event.target).closest(burgerNav).length &&
+   !$(event.target).is(headerBurger)) ||
+    $(event.target).closest(burgerNavClose).length > 0) {
+    burgerNav.animate({
+      left: '-400px',
+    }, 500, function () {
+      burgerNavClose.animate({
+        opacity: 0,
+      }, 300, 'swing');
+    });
+  }
+});
